@@ -1,24 +1,18 @@
 import React from 'react'
-import VideoPlayer from './VideoPlayer'
+import AudioPlayer from './AudioPlayer.js'
 
 function Recommendation({recNum, track, artist, coverArtURL, preview}) {
 
     const videoJsOptions = {
         autoplay: false,
         controls: true,
-        sources: [{
-          src: `${preview}`,
-          type: 'audio/mpeg'
-        }],
-        height: 0,
-        children: [
-            'bigPlayButton', 
-            'vjs-control',
-            'vjs-button',
-            'vjs-paused',
-            'controlBar'
-        ]
-      }
+        sources: [
+          {
+            src: `${preview}`,
+            type: 'video/mp4',
+          },
+        ],
+      };
 
     return (
         <div className='recommendation'>
@@ -30,7 +24,7 @@ function Recommendation({recNum, track, artist, coverArtURL, preview}) {
                 <h3 className='artists-name'>{artist}</h3>        
             </div>        
             <div className='rec-preview'>
-                <VideoPlayer { ...videoJsOptions } />
+                { preview != "null" && <AudioPlayer recNum={recNum} { ...videoJsOptions } />}
             </div>
         </div>
     )

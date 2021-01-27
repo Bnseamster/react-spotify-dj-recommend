@@ -6,26 +6,22 @@ import axios from 'axios';
 
 function App() {
       
-  const [token, setToken] = useState('');
-  const [artistID, setArtistID] = useState('');
-  const [trackID, setTrackID] = useState('');
-  const [recommendations, setRecommendations] = useState([]);
-  const [searchParams, setParams ]= useState({})
-
-
-  const fetchRecommendations = (paramsObj)=>{
-    console.log(paramsObj)
-    
-    
-
-    setParams(paramsObj);
-    console.log(searchParams)
-
-  }
-  ///API CALL LOGIC
-  const CLIENT_ID = '5895f98c24ce4792826ece2403169238'
-  const CLIENT_SECRET = 'bce4f73f463f492c925b57164f0986d8'
-  const acceptableGenres = [
+    const [token, setToken] = useState('');
+    const [artistID, setArtistID] = useState('');
+    const [trackID, setTrackID] = useState('');
+    const [recommendations, setRecommendations] = useState([]);
+    const [searchParams, setParams ]= useState({})
+  
+  
+    const fetchRecommendations = (paramsObj)=>{     
+      setParams(paramsObj);
+      console.log(searchParams)
+  
+    }
+    ///API CALL LOGIC
+    const CLIENT_ID = '5895f98c24ce4792826ece2403169238'
+    const CLIENT_SECRET = 'bce4f73f463f492c925b57164f0986d8'
+    const acceptableGenres = [
     "acoustic",
     "afrobeat",
     "alt-rock",
@@ -151,106 +147,210 @@ function App() {
     "trip-hop",
     "turkish",
     "work-out",
-        "world-music"]
-   
+          "world-music"]
+    useEffect(()=> {
+        
+        let artist = searchParams.artist;
+        let track = searchParams.track;
+        let genre = searchParams.genre;
+        let tempo = searchParams.tempo === ''? '' :`&target_tempo=${searchParams.tempo}`
+        let key = searchParams.key === '' ? '' :`&target_key=${searchParams.key}`
+        let popularity = 20;
+        let searchLimit = 1;
+        let tempAID = '';
+        let tempTID = '';
+        let tempToken = '';
 
-  useEffect(()=> {
-      if(Object.keys(searchParams).length === 0){
-          return console.log('HERE')
-      }
-      setRecommendations([]);
-      setArtistID('');
-      setTrackID('');
-      setToken('');
-      
-      console.log(searchParams)
-      let artist = searchParams.artist;
-      let track = searchParams.track;
-      let genre = searchParams.genre;
-      let tempo = searchParams.tempo === ''? '' :`&target_tempo=${searchParams.tempo}`
-      let key = searchParams.key === '' ? '' :`&target_key=${searchParams.key}`
-      let popularity = 20;
-      let searchLimit = 1;
-      console.log(searchParams)
-      axios('https://accounts.spotify.com/api/token', {
-          headers: {
-              'Content-Type' : 'application/x-www-form-urlencoded',
-              'Authorization' : 'Basic ' + btoa(CLIENT_ID + ':' + CLIENT_SECRET)      
-          },
-          data: 'grant_type=client_credentials',
-            method: 'POST'
-      })
-          .then(tokenResponse => {
-                    
-              setToken(tokenResponse.data.access_token);
-          
-              //search for artist ID (Search for an Item endpoint)**Default to song's artist/s
-              axios(`https://api.spotify.com/v1/search?q=${artist}&type=artist&market=US&limit=${searchLimit}`, {
-                  method: 'GET',
-                  headers: { 'Authorization' : 'Bearer ' + token}
-              })
-                  .then(response => {
-                    
-                      
-                      setArtistID(response.data.artists.items[0].id);
-                      //If genre empty set to artist's genres
-                      console.log(response.data.artists)
-                      genre = genre.length === 0 ? response.data.artists.items[0].genres: genre;
-                      
-                      if(genre.length > 3){
-                          let genres =[]
-                          while(genres.length < 3){
-                              if(genre[randomIndex(genre.length)]){
-                                  let index = randomIndex(genre.length);
-                                  genres.push(genre[index]);
-                                  genre.splice(index,1);
-                              }
-                          }
-                          genre = genres.join(',')
-                      }else{
-                          genre.join(',')
-                      }
-                      console.log(genre)
-                       
-                      
-                      //search for track ID (Search for an Item endpoint)**Default to artists top songs if none given
-                      console.log(`https://api.spotify.com/v1/artists/${artistID}/top-tracks`)
-                      axios(`https://api.spotify.com/v1/artists/${artistID}/top-tracks?market=US`, {
-                          method: 'GET',
-                          headers: { 'Authorization' : 'Bearer ' + token}
-                      })
-                          .then(response => {
-                              console.log(response.data.tracks) 
-                              setTrackID(response.data.tracks[0].id);
-                             
-                              //search for related tracks (Get Recommendations Based on Seeds endpoint) has parameters of [limit, market, seed_artists*,seed_genres*,seed_tracks*, target_dancability, target_energy, target_key, target_tempo, target_popularity ]
-                              //https://api.spotify.com/v1/recommendations?limit=50&market=US&seed_artists=${artistID}&seed_genres=${genre}&seed_tracks=${trackID}
-                              console.log(`https://api.spotify.com/v1/recommendations?limit=50&market=US&seed_artists=${artistID}&seed_genres=${genre}&seed_tracks=${trackID}${tempo}`)
-                              axios(`https://api.spotify.com/v1/recommendations?limit=50&market=US&seed_artists=${artistID}&seed_genres=${genre}&seed_tracks=${trackID}&min_popularity=${popularity}${tempo}`, {
-                                  method: 'GET',
-                                  headers: { 'Authorization' : 'Bearer ' + tokenResponse.data.access_token}
-                              })
-                                  .then(response => {
-              
-                                      setRecommendations(response.data.tracks)
-                                      console.log(response.data.tracks)
-                                  })
-                                  .catch((error) => {
-                                      console.error(error);
-                                  })
-                          })
-                      
-                  })
-          });
-  
-  },[searchParams])
+        if(artist != ''){
     
+            if(Object.keys(searchParams).length === 0){
+                return console.log('HERE')
+            }
+            setRecommendations([]);
+            setArtistID('');
+            setTrackID('');
+            setToken('');
+
+
+
+
+            axios('https://accounts.spotify.com/api/token', {
+                headers: {
+                    'Content-Type' : 'application/x-www-form-urlencoded',
+                    'Authorization' : 'Basic ' + btoa(CLIENT_ID + ':' + CLIENT_SECRET)      
+                },
+                data: 'grant_type=client_credentials',
+                  method: 'POST'
+            })
+                .then(tokenResponse => {
+
+                    setToken(tokenResponse.data.access_token);
+                    tempToken = tokenResponse.data.access_token;
+                    //search for artist ID (Search for an Item endpoint)**Default to song's artist/s
+                    return axios(`https://api.spotify.com/v1/search?q=${artist}&type=artist&market=US&limit=${searchLimit}`, {
+                        method: 'GET',
+                        headers: { 'Authorization' : 'Bearer ' + tempToken}
+                    })
+                })
+                .catch((error) => {
+                  console.error(error);
+                })
+                .then(response => {
+                
+                    setArtistID(response.data.artists.items[0].id);
+                    tempAID = response.data.artists.items[0].id;
+                    //If genre empty set to artist's genres
+
+
+                    genre = genre.length === 0 ? response.data.artists.items[0].genres: genre;
+                    if(genre.length > 3){
+                        let genres =[]
+                        while(genres.length < 3){
+                            if(genre[randomIndex(genre.length)]){
+                                let index = randomIndex(genre.length);
+                                genres.push(genre[index]);
+                                genre.splice(index,1);
+                            }
+                        }
+                        genre = genres.join(',');
+                    }else{
+
+                        genre = genre.join(',');
+                    }
+                
+                    genre = genre.replace(/[ ,]/g, '%20');               
+
+                    //search for track ID (Search for an Item endpoint)**Default to artists top songs if none given
+
+                    return axios(`https://api.spotify.com/v1/artists/${tempAID}/top-tracks?market=US`, {
+                        method: 'GET',
+                        headers: { 'Authorization' : 'Bearer ' + tempToken}
+                    })
+                })
+                .catch((error) => {
+                  console.error(error);
+                })
+                .then(response => {
+                    console.log(response.data.tracks) 
+                    setTrackID(response.data.tracks[0].id);
+                    tempTID = response.data.tracks[0].id;
+                    console.log(genre, tempAID, tempTID)
+                    console.log(token)
+                    //search for related tracks (Get Recommendations Based on Seeds endpoint) has parameters of [limit, market, seed_artists*,seed_genres*,seed_tracks*, target_dancability, target_energy, target_key, target_tempo, target_popularity ]
+                    //https://api.spotify.com/v1/recommendations?limit=50&market=US&seed_artists=${artistID}&seed_genres=${genre}&seed_tracks=${trackID}
+                    
+                    return axios(`https://api.spotify.com/v1/recommendations?limit=50&market=US&seed_artists=${tempAID}&seed_genres=${genre}&seed_tracks=${tempTID}&min_popularity=${popularity}${tempo}`, {
+                        method: 'GET',
+                        headers: { 'Authorization' : 'Bearer ' + tempToken}
+                    })
+                })
+                .catch((error) => {
+                  console.error(error);
+                })
+                .then(response => {
+                  setRecommendations(response.data.tracks)
+                  return 
+                })
+            
+                .catch((error) => {
+                    console.error(error);  
+                })
+        }else if(artist == '' && track != ''){
+            
+            if(Object.keys(searchParams).length === 0){
+                return console.log('HERE')
+            }
+            setRecommendations([]);
+            setArtistID('');
+            setTrackID('');
+            setToken('');
+
+            axios('https://accounts.spotify.com/api/token', {
+                headers: {
+                    'Content-Type' : 'application/x-www-form-urlencoded',
+                    'Authorization' : 'Basic ' + btoa(CLIENT_ID + ':' + CLIENT_SECRET)      
+                },
+                data: 'grant_type=client_credentials',
+                  method: 'POST'
+            })
+                .then(tokenResponse => {
+
+                    setToken(tokenResponse.data.access_token);
+                    tempToken = tokenResponse.data.access_token;
+                    //search for artist ID (Search for an Item endpoint)**Default to song's artist/s
+                    return axios(`https://api.spotify.com/v1/search?q=${track}&type=track&market=US&limit=${searchLimit}`, {
+                        method: 'GET',
+                        headers: { 'Authorization' : 'Bearer ' + tempToken}
+                    })
+                })
+                .catch((error) => {
+                  console.error(error);
+                })
+                .then(response => {
+                    console.log(response.data)
+
+                    tempAID = response.data.tracks.items[0].album.artists[0].id;
+                    tempTID = response.data.tracks.items[0].id;
+                    //If genre empty set to artist's genres
+
+
+                    genre = genre.length === 0 ? response.data.artists.items[0].genres: genre;
+                    console.log(genre)
+                    if(genre.length > 3){
+                        let genres =[]
+                        while(genres.length < 3){
+                            if(genre[randomIndex(genre.length)]){
+                                let index = randomIndex(genre.length);
+                                genres.push(genre[index]);
+                                genre.splice(index,1);
+                            }
+                        }
+                        genre = genres.join(',');
+                    }else{
+
+                        genre = genre.join(',');
+                    }
+                
+                    genre = genre.replace(/[ ,]/g, '%20');               
+
+                    //search for related songs
+                    return axios(`https://api.spotify.com/v1/recommendations?limit=50&market=US&seed_artists=${tempAID}&seed_genres=${genre}&seed_tracks=${tempTID}&min_popularity=${popularity}${tempo}`, {
+                        method: 'GET',
+                        headers: { 'Authorization' : 'Bearer ' + tempToken}
+                    })
+                })
+                .catch((error) => {
+                  console.error(error);
+                })
+                .then(response => {
+                  setRecommendations(response.data.tracks)
+                  return 
+                })
+            
+                .catch((error) => {
+                    console.error(error);  
+                })
+
+        }
+    },[searchParams])
     
-  //Api helper function, generates random index of array
-  function randomIndex(indexLength){
-      return Math.floor(Math.random()*indexLength)
-  }
+    //Api helper function, generates random index of array
+    function randomIndex(indexLength){
+        return Math.floor(Math.random()*indexLength)
+    }
 ///END OF API LOGIC
+    let videos = document.querySelectorAll('Video');
+    function getVids(){
+        videos = document.querySelectorAll('Video');
+        videos.forEach((e)=>{
+            console.log(e)
+            e.addEventListener('play', hello)
+        })
+    }
+    function hello(){
+        console.log('hello')
+    }
+
 
 
 
@@ -260,11 +360,15 @@ function App() {
       <h1>Song Recommender</h1>
       <QueryForm onSubmit = {fetchRecommendations} />
       <Recommendations recommendations={recommendations}/>
-
-
-      
+     
     </div>
   );
 }
 
 export default App;
+
+
+
+
+// https://api.spotify.com/v1/recommendations?limit=50&market=US&seed_artists=3TVXtAsR1Inumwj472S9r4&seed_genres=pop rap,rap,hip hop&seed_tracks=2SAqBLGA283SUiwJ3xOUVI
+// https://api.spotify.com/v1/recommendations?limit=50&market=US&seed_artists=3TVXtAsR1Inumwj472S9r4&seed_genres=rap,toronto rap,canadian hip hop&seed_tracks=2SAqBLGA283SUiwJ3xOUVI

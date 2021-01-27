@@ -196,7 +196,7 @@ function QueryForm({onSubmit}) {
                                     setGenre([genre]);
                                     chkGreen(e);
                                     }}/>
-                                <span class="checkmark"></span>
+                                <span className="checkmark"></span>
                             </label>
                         ))}
                     </div>
@@ -220,7 +220,7 @@ function QueryForm({onSubmit}) {
                                     checkChange(e);
                                     setKey(keys[key]);
                                     }}/>
-                                <span class="checkmark"></span>
+                                <span className="checkmark"></span>
                             </label>
                         ))}
                     </div>

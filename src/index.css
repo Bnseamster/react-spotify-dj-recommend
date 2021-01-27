@@ -37,6 +37,7 @@ code {
 }
 .recommendation{
   margin: 0 1rem;
+  position: relative;
   /* height: 32rem; */
 }
 .recommendation *{
@@ -197,4 +198,46 @@ input:focus{
 
 .green-glow{
   box-shadow: 0px 0px 6px 0px #24ff3ffa;
+}
+.rec-preview{
+  position: absolute;
+  top: 150px;
+  height: 60px;
+  overflow: hidden;
+}
+
+.control-text{
+  display: none;
+}
+.video-js >*{
+  display: none;
+}
+.video-js{
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+.video-js:focus{
+  outline: none;
+}
+.vjs-control-bar{
+  display: block !important;
+}
+.vjs-control-bar > *{
+  display: none;
+}
+.vjs-play-control{
+  display: block !important;
+  position: relative;
+  background: #212121cb;
+  border: none;
+  border-radius: 100%;
+  width: 60px;
+  height: 60px;
+}
+.vjs-play-control:focus{
+  outline: none;
+}
+.vjs-play-control > *{
+  color: white;
 }
