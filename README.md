@@ -1,6 +1,15 @@
+# react-spotify-dj-recommend (aka New Groove)
+
+New Groove recommends DJs and music lovers songs based on their inputs. It is built with React and utilizes the Spotify API. Want song recommendations based on your favorite artist or track? Its got you! and for those DJs out there, you can even choose the BPM and KEY!
+
+-This repo is the source code of the react project used to build the project [New Groove](https://newgroove.netlify.app/) whos deployed build can be found under [this repo](https://github.com/Bnseamster/new-groove)
+
+### Below Is the React Documentation on how to start the app if you download the source code
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
 
 ## Available Scripts
 
