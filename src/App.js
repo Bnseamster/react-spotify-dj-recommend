@@ -237,7 +237,6 @@ function App() {
                     console.log(genre, tempAID, tempTID)
                     console.log(token)
                     //search for related tracks (Get Recommendations Based on Seeds endpoint) has parameters of [limit, market, seed_artists*,seed_genres*,seed_tracks*, target_dancability, target_energy, target_key, target_tempo, target_popularity ]
-                    //https://api.spotify.com/v1/recommendations?limit=50&market=US&seed_artists=${artistID}&seed_genres=${genre}&seed_tracks=${trackID}
                     
                     return axios(`https://api.spotify.com/v1/recommendations?limit=50&market=US&seed_artists=${tempAID}&seed_genres=${genre}&seed_tracks=${tempTID}&min_popularity=${popularity}${tempo}`, {
                         method: 'GET',
@@ -366,9 +365,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-// https://api.spotify.com/v1/recommendations?limit=50&market=US&seed_artists=3TVXtAsR1Inumwj472S9r4&seed_genres=pop rap,rap,hip hop&seed_tracks=2SAqBLGA283SUiwJ3xOUVI
-// https://api.spotify.com/v1/recommendations?limit=50&market=US&seed_artists=3TVXtAsR1Inumwj472S9r4&seed_genres=rap,toronto rap,canadian hip hop&seed_tracks=2SAqBLGA283SUiwJ3xOUVI
